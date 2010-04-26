@@ -35,15 +35,15 @@ module UploadifyS3Helper
 					  var onsucc = (#{options[:on_success]});
 					  onsucc(fileInfo);
 						$('#{options[:file_input_selector]}').hide();
-						return false;  				  
+						return true;  				  
   				},
-  				'onError' 			 : function (event, queueID, fileObj, errorObj) {
+  				'onError' 			 : function (a, b, c, d) {
   					if (d.info == 201) {
   					  fileInfo = {
-  					    'name' : fileObj.name,
-  					    'size' : fileObj.size,
-  					    'type' : fileObj.type,
-  					    'url'  : '#{bucket_url}#{upload_path}/' + fileObj.name
+  					    'name' : c.name,
+  					    'size' : c.size,
+  					    'type' : c.type,
+  					    'url'  : '#{bucket_url}#{upload_path}/' + c.name
   					  };  					  
   					  var onsucc = (#{options[:on_success]});
   					  onsucc(fileInfo);
@@ -51,10 +51,9 @@ module UploadifyS3Helper
   					} else {
               var onerror = (#{options[:on_error]});
               if (onerror) {
-                onerror(d.type, errorObj.text);                
+                onerror(d.type, d.text);                
               }              
   					}
-  					return true;  										
   				},				
           'scriptData' 		 : {
              'AWSAccessKeyId': '#{aws_access_key}',
