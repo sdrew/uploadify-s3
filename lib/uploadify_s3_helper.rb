@@ -1,5 +1,14 @@
 module UploadifyS3Helper
   
+  def uploadify_s3(options = {})
+    stylesheet_link_tag('uploadify/uploadify') <<
+    javascript_include_tag('uploadify/jquery.uploadify.v2.1.0.min') <<
+    javascript_include_tag('uploadify/swfobject') <<
+    javascript_uploadify_s3_tag(options)
+  end
+  
+  protected
+  
   def javascript_uploadify_s3_tag(options = {})
     options = default_options.merge(options)
     javascript_tag( %(
@@ -61,13 +70,6 @@ module UploadifyS3Helper
     ))
   end
   
-  def uploadify_s3(options = {})
-    stylesheet_link_tag('uploadify/uploadify') <<
-    javascript_include_tag('uploadify/jquery.uploadify.v2.1.0.min') <<
-    javascript_include_tag('uploadify/swfobject') <<
-    javascript_uploadify_s3_tag(options)
-  end
-  
   def bucket_url
     "http://#{bucket}.s3.amazonaws.com/"
   end
@@ -76,8 +78,8 @@ module UploadifyS3Helper
     "#{upload_path}/${filename}"
   end
   
-  def s3_policy
-    policy_doc =   "{'expiration': '#{expiration_date}',
+  def policy_doc 
+    "{'expiration': '#{expiration_date}',
         'conditions': [
           {'bucket': '#{bucket}'},
           ['starts-with', '$key', '#{upload_path}/'],
@@ -89,12 +91,14 @@ module UploadifyS3Helper
           ['starts-with','$fileext',''],
         ]
       }"
-
+  end
+  
+  def s3_policy
     Base64.encode64(policy_doc).gsub(/\n|\r/, '')    
   end
- 
+  
   def s3_signature
-    Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha1'), secret, policy)).gsub(/\n| |\r/, '')
+    Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha1'), aws_secret_key, s3_policy)).gsub(/\n| |\r/, '')
   end
 
   private
