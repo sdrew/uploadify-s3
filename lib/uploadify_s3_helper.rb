@@ -16,6 +16,18 @@ module UploadifyS3Helper
   				'sizeLimit'			 : '#{max_filesize}',
   				'fileDesc'		   : '#{options[:file_desc]}',				
   				'fileExt'				 : '#{options[:file_ext]}',
+  				'onComplete'     : function(event, queueID, fileObj, response) {
+            fileInfo = {
+					    'name' : c.name,
+					    'size' : c.size,
+					    'type' : c.type,
+					    'url'  : '#{bucket_url}#{upload_path}/' + c.name
+					  };  					  
+					  var onsucc = (#{options[:on_success]});
+					  onsucc(fileInfo);
+						$('#{options[:file_input_selector]}').hide();
+						return false;  				  
+  				},
   				'onError' 			 : function (a, b, c, d) {
   					if (d.info == 201) {
   					  fileInfo = {
@@ -27,13 +39,13 @@ module UploadifyS3Helper
   					  var onsucc = (#{options[:on_success]});
   					  onsucc(fileInfo);
   						$('#{options[:file_input_selector]}').hide();
-  						return false;
   					} else {
               var onerror = (#{options[:on_error]});
               if (onerror) {
                 onerror(d.type, d.text);                
               }              
   					}
+  					return true;  										
   				},				
           'scriptData' 		 : {
              'AWSAccessKeyId': '#{aws_access_key}',
@@ -78,11 +90,11 @@ module UploadifyS3Helper
         ]
       }"
 
-    Base64.encode64(policy_doc).gsub("\n","")
+    Base64.encode64(policy_doc).gsub(/\n|\r/, '')    
   end
  
   def s3_signature
-    CGI.escape(Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha1'), aws_secret_key, s3_policy)).gsub("\n",""))
+    Base64.encode64(OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha1'), secret, policy)).gsub(/\n| |\r/, '')
   end
 
   private
