@@ -27,23 +27,23 @@ module UploadifyS3Helper
   				'fileExt'				 : '#{options[:file_ext]}',
   				'onComplete'     : function(event, queueID, fileObj, response) {
             fileInfo = {
-					    'name' : c.name,
-					    'size' : c.size,
-					    'type' : c.type,
-					    'url'  : '#{bucket_url}#{upload_path}/' + c.name
+					    'name' : fileObj.name,
+					    'size' : fileObj.size,
+					    'type' : fileObj.type,
+					    'url'  : '#{bucket_url}#{upload_path}/' + fileObj.name
 					  };  					  
 					  var onsucc = (#{options[:on_success]});
 					  onsucc(fileInfo);
 						$('#{options[:file_input_selector]}').hide();
 						return false;  				  
   				},
-  				'onError' 			 : function (a, b, c, d) {
+  				'onError' 			 : function (event, queueID, fileObj, errorObj) {
   					if (d.info == 201) {
   					  fileInfo = {
-  					    'name' : c.name,
-  					    'size' : c.size,
-  					    'type' : c.type,
-  					    'url'  : '#{bucket_url}#{upload_path}/' + c.name
+  					    'name' : fileObj.name,
+  					    'size' : fileObj.size,
+  					    'type' : fileObj.type,
+  					    'url'  : '#{bucket_url}#{upload_path}/' + fileObj.name
   					  };  					  
   					  var onsucc = (#{options[:on_success]});
   					  onsucc(fileInfo);
@@ -51,7 +51,7 @@ module UploadifyS3Helper
   					} else {
               var onerror = (#{options[:on_error]});
               if (onerror) {
-                onerror(d.type, d.text);                
+                onerror(d.type, errorObj.text);                
               }              
   					}
   					return true;  										
