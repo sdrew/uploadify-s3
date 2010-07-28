@@ -54,7 +54,6 @@ module UploadifyS3Helper
 						return true;
   				},
   				'onError' 			 : function (a, b, c, d) {
-            $('div.button_group').show();
   					if (d.info == 201) {
   					  fileInfo = {
   					    'name' : c.name,
@@ -74,7 +73,7 @@ module UploadifyS3Helper
               }              
   					}
   					
-  				 return true;
+  				  return true;
   				},				
           'scriptData' 		 : {
              'AWSAccessKeyId': '#{aws_access_key}',
