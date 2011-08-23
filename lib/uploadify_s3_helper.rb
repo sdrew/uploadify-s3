@@ -4,7 +4,7 @@ module UploadifyS3Helper
   
   def uploadify_s3(options = {})
     stylesheet_link_tag('uploadify/uploadify') <<
-    javascript_include_tag('uploadify/jquery.uploadify.v2.1.0.min') <<
+    javascript_include_tag('uploadify/jquery.uploadify.v2.1.4.min') <<
     javascript_include_tag('uploadify/swfobject') <<
     javascript_uploadify_s3_tag(options)
   end
